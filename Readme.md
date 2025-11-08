@@ -1,154 +1,318 @@
-🚀 Network File Sharing System — C++ (Client-Server)
 
-A secure, multi-client TCP File Sharing System built in C++ using Raw Socket Programming.
-Supports authentication, file upload/download, directory management & logging — like a mini FTP server.
+# 🚀 Network File Sharing System — C++ (Client ↔ Server)
 
-📋 Table of Contents
+A lightweight, multi-client TCP file sharing system in C++ (POSIX sockets).  
+Features authentication, upload/download, directory management and logging — a minimal FTP-like server for learning and prototyping.
 
-📁 Features
+---
 
-🧠 Architecture
+## Table of Contents
+- Features
+- Architecture
+- Requirements
+- Folder structure
+- Build & Run
+- Configuration (users)
+- Client commands / Protocol
+- Examples
+- Troubleshooting
+- Future enhancements
+- Author
 
-📂 Folder Structure
+---
 
-⚙️ Setup & Compilation
+## Features
+- Authentication via users.txt (username:password:role)
+- LIST / GET / PUT / MKDIR / RM commands
+- Threaded: handles multiple clients
+- File I/O and chunked transfers
+- Logging to `logs/server.log` and console
+- Cross-platform: Linux / macOS / WSL / MinGW (Windows)
 
-🔑 Login Credentials
+---
 
-🧭 Usage Commands
+## Architecture
+Client ↔ TCP ↔ Server
 
-🖥️ Sample Output
+Server responsibilities:
+- Authenticate users
+- Serve directory listings
+- Send/receive files (binary-safe)
+- Create/remove directories/files
+- Log events
 
-📚 Learning Outcomes
+---
 
-🚀 Future Enhancements
+## Requirements
+- g++ (C++17) or equivalent
+- pthreads (Linux/WSL/macOS)
+- On Windows with MinGW: link ws2_32 and adapt sockets if needed
+- C++ standard library filesystem support
 
-👨‍💻 Author
+---
 
-📁 Features
-Feature	Description
-🔐 Login authentication	Credentials stored in users.txt
-📂 List directory contents	View server files & folders
-⬇️ Download files	Client can GET files
-⬆️ Upload files	Client can PUT files
-📁 Create folders	MKDIR support
-🗑 Remove files	RM command
-⚙ Multi-client	Threaded server
-🧾 Logging	Logs to logs/server.log + console
-🛠️ Platform	Works on Linux & Windows
-🧠 Architecture
-+-----------+         TCP/IP Socket         +-----------+
-|   Client  |  <--------------------------> |   Server  |
-|-----------|                               |-----------|
-| Login     |                               | User Auth |
-| Commands  |                               | File Ops  |
-| File I/O  |                               | Logging   |
-+-----------+                               +-----------+
-
-📂 Folder Structure
+## Folder structure
 project/
- ├── server.cpp
- ├── client.cpp
- ├── users.txt
- ├── server_files/
- ├── downloads/
- └── logs/
+- server.cpp
+- client.cpp
+- users.txt
+- server_files/    (served files)
+- downloads/       (client default)
+- logs/            (server.log)
 
-⚙️ Setup & Compilation
-✅ Linux / macOS / WSL
+---
 
-Server
+## Build & Run
 
+Linux / macOS / WSL
+```sh
+# Server
 g++ -std=c++17 server.cpp -o server -lpthread
 ./server
 
-
-Client
-
+# Client
 g++ -std=c++17 client.cpp -o client
 ./client
+```
 
-🪟 Windows (MinGW / CMD / PowerShell)
-
-Server
-
+Windows (MinGW)
+```ps1
+# Server (may require winsock init in client/server)
 g++ -std=c++17 server.cpp -o server.exe -lws2_32 -lpthread
 .\server.exe
 
+g++ -std=c++17 client.cpp -o client.exe -lws2_32
+.\client.exe
+```
 
-Client
+Notes:
+- Use WSL for POSIX sockets to avoid Windows API changes.
+- Server listens on port 8080 by default (see `PORT` in server.cpp).
+
+---
+
+## Configuration — users.txt
+Format per line:
+```
+username:password:role
+```
+Example (workspace)
+```
+admin:1234:admin
+omm:12343:user
+abhi:56787:user
+```
+Clients send `username:password` on connect for authentication.
+
+---
+
+## Client Commands / Protocol (line-based)
+- AUTH: client sends `user:pass\n` → server replies `AUTH_OK\n` or `AUTH_FAIL\n`
+- LIST: `LIST\n` → `OK\n` + file list ending with `.\n`
+- GET: `GET filename\n` → `OK <size>\n` then <size> bytes (binary)
+- PUT: `PUT filename size\n` → server `OK READY\n` then client sends <size> bytes → server responds `OK SAVED\n`
+- MKDIR: `MKDIR name\n` → `OK MKDIR\n`
+- RM: `RM path\n` → `OK RM\n`
+- EXIT: `EXIT\n` → disconnect
+
+Error responses: prefixed with `ERR` (for example `ERR NOT_FOUND\n`).
+
+---
+
+## Examples
+
+1) List files
+Client: `LIST\n`  
+Server: `OK\nwelcome.txt\nimages/\n.\n`
+
+2) Download file
+Client: `GET welcome.txt\n`  
+Server: `OK 1234\n` followed by 1234 raw bytes
+
+3) Upload file
+Client: `PUT report.pdf 204800\n`  
+Server: `OK READY\n` then client streams 204800 bytes
+
+---
+
+## Troubleshooting
+- "Permission denied" — ensure `server_files/` exists and server has write permissions.
+- Partial transfers — make sure client/server read/write loop handles returned byte counts.
+- Windows socket errors — prefer WSL or adapt code for Winsock (WSAStartup, closesocket, etc.).
+
+---
+
+## Future enhancements
+- TLS/SSL for encrypted transport
+- Hashed passwords / SQLite user DB
+- Resume interrupted transfers
+- CLI improvements and progress reporting
+- GUI or web-based client
+
+---
+
+## Author
+Anirban Sarangi — Capstone Project (2025)  
+Contact: your email
+
+---
+```<!-- filepath: d:\networkFileSharing\Readme.md -->
+<!-- ...existing code... -->
+
+# 🚀 Network File Sharing System — C++ (Client ↔ Server)
+
+A lightweight, multi-client TCP file sharing system in C++ (POSIX sockets).  
+Features authentication, upload/download, directory management and logging — a minimal FTP-like server for learning and prototyping.
+
+---
+
+## Table of Contents
+- Features
+- Architecture
+- Requirements
+- Folder structure
+- Build & Run
+- Configuration (users)
+- Client commands / Protocol
+- Examples
+- Troubleshooting
+- Future enhancements
+- Author
+
+---
+
+## Features
+- Authentication via users.txt (username:password:role)
+- LIST / GET / PUT / MKDIR / RM commands
+- Threaded: handles multiple clients
+- File I/O and chunked transfers
+- Logging to `logs/server.log` and console
+- Cross-platform: Linux / macOS / WSL / MinGW (Windows)
+
+---
+
+## Architecture
+Client ↔ TCP ↔ Server
+
+Server responsibilities:
+- Authenticate users
+- Serve directory listings
+- Send/receive files (binary-safe)
+- Create/remove directories/files
+- Log events
+
+---
+
+## Requirements
+- g++ (C++17) or equivalent
+- pthreads (Linux/WSL/macOS)
+- On Windows with MinGW: link ws2_32 and adapt sockets if needed
+- C++ standard library filesystem support
+
+---
+
+## Folder structure
+project/
+- server.cpp
+- client.cpp
+- users.txt
+- server_files/    (served files)
+- downloads/       (client default)
+- logs/            (server.log)
+
+---
+
+## Build & Run
+
+Linux / macOS / WSL
+```sh
+# Server
+g++ -std=c++17 server.cpp -o server -lpthread
+./server
+
+# Client
+g++ -std=c++17 client.cpp -o client
+./client
+```
+
+Windows (MinGW)
+```ps1
+# Server (may require winsock init in client/server)
+g++ -std=c++17 server.cpp -o server.exe -lws2_32 -lpthread
+.\server.exe
 
 g++ -std=c++17 client.cpp -o client.exe -lws2_32
 .\client.exe
+```
 
-🔑 Login Credentials
+Notes:
+- Use WSL for POSIX sockets to avoid Windows API changes.
+- Server listens on port 8080 by default (see `PORT` in server.cpp).
 
-users.txt
+---
 
+## Configuration — users.txt
+Format per line:
+```
+username:password:role
+```
+Example (workspace)
+```
 admin:1234:admin
-user:pass:user
+omm:12343:user
+abhi:56787:user
+```
+Clients send `username:password` on connect for authentication.
 
+---
 
-Login from client:
+## Client Commands / Protocol (line-based)
+- AUTH: client sends `user:pass\n` → server replies `AUTH_OK\n` or `AUTH_FAIL\n`
+- LIST: `LIST\n` → `OK\n` + file list ending with `.\n`
+- GET: `GET filename\n` → `OK <size>\n` then <size> bytes (binary)
+- PUT: `PUT filename size\n` → server `OK READY\n` then client sends <size> bytes → server responds `OK SAVED\n`
+- MKDIR: `MKDIR name\n` → `OK MKDIR\n`
+- RM: `RM path\n` → `OK RM\n`
+- EXIT: `EXIT\n` → disconnect
 
-admin:1234
+Error responses: prefixed with `ERR` (for example `ERR NOT_FOUND\n`).
 
-🧭 Usage Commands
-Action	Client Menu
-📂 List files	1
-⬇ Download file	2
-⬆ Upload file	3
-📁 Create directory	4
-🗑 Delete file/folder	5
-🚪 Exit	6
-🖥️ Sample Output
-✅ Server Console
-✅ Server running on port 8080
-LOGIN OK: admin
-admin GET welcome.txt
-admin PUT report.pdf
-DISCONNECT: admin
+---
 
-✅ Client Console
-Login (username:password): admin:1234
-✅ Login Success
+## Examples
 
-1) LIST
-2) GET
-3) PUT
-4) MKDIR
-5) RM
-6) EXIT
+1) List files
+Client: `LIST\n`  
+Server: `OK\nwelcome.txt\nimages/\n.\n`
 
-📂 Files:
-welcome.txt
-images/
-video.mp4
+2) Download file
+Client: `GET welcome.txt\n`  
+Server: `OK 1234\n` followed by 1234 raw bytes
 
-🎯 Learning Outcomes
+3) Upload file
+Client: `PUT report.pdf 204800\n`  
+Server: `OK READY\n` then client streams 204800 bytes
 
-TCP/IP socket programming
+---
 
-Multi-threaded system design
+## Troubleshooting
+- "Permission denied" — ensure `server_files/` exists and server has write permissions.
+- Partial transfers — make sure client/server read/write loop handles returned byte counts.
+- Windows socket errors — prefer WSL or adapt code for Winsock (WSAStartup, closesocket, etc.).
 
-File I/O operations
+---
 
-Client-Server authentication
+## Future enhancements
+- TLS/SSL for encrypted transport
+- Hashed passwords / SQLite user DB
+- Resume interrupted transfers
+- CLI improvements and progress reporting
+- GUI or web-based client
 
-Logging and directory management
+---
 
-Real-world networking concepts
+## Author
+Anirban Sarangi — Capstone Project (2025)  
+Contact: your email
 
-🚀 Future Enhancements
-Enhancement	Purpose
-🔒 TLS/SSL Encryption	Secure file transfer
-🧠 SQLite user DB	Replace users.txt
-🔁 Resume broken transfers	Like real FTP clients
-📦 File Sync Client	Auto sync like Dropbox
-🖥 Web or GUI Dashboard	React / Qt / Tkinter frontend
-👨‍💻 Author
-
-Anirban Sarangi
-📧 your email
-📌 Capstone Project — Linux & Socket Programming
-🗓️ 2025
+---
