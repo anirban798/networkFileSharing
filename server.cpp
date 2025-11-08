@@ -11,6 +11,8 @@
 #include <sstream>
 #include <map>
 #include <mutex>
+#include <chrono>
+#include <iomanip>
 using namespace std;
 namespace fs = std::filesystem;
 
@@ -26,8 +28,15 @@ void log_event(string msg) {
     lock_guard<mutex> guard(log_lock);
     fs::create_directories("logs"); // Ensure log folder exists
     ofstream log("logs/server.log", ios::app);
-    log << msg << endl;
-    cout << msg << endl;
+
+    // Get current time
+    auto now = chrono::system_clock::now();
+    auto now_time_t = chrono::system_clock::to_time_t(now);
+    stringstream time_ss;
+    time_ss << put_time(localtime(&now_time_t), "%Y-%m-%d %H:%M:%S");
+
+    log << "[" << time_ss.str() << "] " << msg << endl; // Add timestamp
+    cout << "[" << time_ss.str() << "] " << msg << endl; // Add timestamp
 }
 
 //--------------------------------------
