@@ -1,0 +1,5 @@
+2025-11-08 23:22:44] LOGIN OK: omm
+[2025-11-08 23:23:39] omm GET welcome.txt
+[2025-11-08 23:24:06] omm GET doom.jpeg
+[2025-11-08 23:27:08] omm UPLOAD doom.jpeg
+[2025-11-08 23:29:17] DISCONNECT: omm
