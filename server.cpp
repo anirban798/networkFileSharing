@@ -184,6 +184,8 @@ void handle_client_tls(SSL* ssl) {
             ssl_send_str(ssl, "ERR UNKNOWN_CMD\n");
         }
     }
+    
+    log_line("Client disconnected: " + user);
 }
 
 int main() {
