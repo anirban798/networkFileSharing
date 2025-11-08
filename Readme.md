@@ -153,7 +153,7 @@ Server: `OK READY\n` then client streams 204800 bytes
 
 ## Author
 Anirban Sarangi — Capstone Project (2025)  
-Contact: your email
+Contact: anirbansarangi798@gmail.com
 
 ---
 ```<!-- filepath: d:\networkFileSharing\Readme.md -->
