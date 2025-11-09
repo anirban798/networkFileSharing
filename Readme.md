@@ -21,8 +21,8 @@ Supports secure login, file upload/download, directory management, multi-client 
 ## Project Structure
 
 project/
-- server_tls.cpp      — TLS secured server
-- client_tls.cpp      — TLS secured client
+- server.cpp      — TLS secured server
+- client.cpp      — TLS secured client
 - server.crt          — Server certificate (example)
 - server.key          — Server private key (example)
 - users.txt           — Credentials file (username:password:role)
@@ -77,23 +77,23 @@ Copy `server.crt` to the client folder so the client can validate the server cer
 
 Linux / WSL:
 ```bash
-g++ -std=c++17 server_tls.cpp -o server_tls -lssl -lcrypto -lpthread
-g++ -std=c++17 client_tls.cpp -o client_tls -lssl -lcrypto
+g++ -std=c++17 server.cpp -o server -lssl -lcrypto -lpthread
+g++ -std=c++17 client.cpp -o client -lssl -lcrypto
 ```
 
 Windows (MSYS2 / MinGW64):
 ```bash
-g++ -std=c++17 server_tls.cpp -o server_tls.exe -lssl -lcrypto -lws2_32 -lpthread
-g++ -std=c++17 client_tls.cpp -o client_tls.exe -lssl -lcrypto -lws2_32
+g++ -std=c++17 server.cpp -o server.exe -lssl -lcrypto -lws2_32 -lpthread
+g++ -std=c++17 client.cpp -o client.exe -lssl -lcrypto -lws2_32
 ```
 
 Run:
 ```bash
 # Start server
-./server_tls
+./server
 
 # Start client (in separate terminal)
-./client_tls
+./client
 ```
 
 ---
